@@ -1,17 +1,9 @@
 import os
 from PIL import Image
-from pprint import pprint
 from math import sqrt, ceil
 
 
-list_of_repos = [f'repos/{i}' for i in os.listdir(path="repos")]
-# pprint(list_of_repos)
-list_of_images = [f'repos/1_LikeButton/{i}' for i in os.listdir(path="repos/1_LikeButton")]
-pprint(list_of_images)
-
-
-
-def create_collage(listofimages):
+def create_collage(list_of_images, repo):
     collage_width_hight = 800
     cols_rows = int(ceil(sqrt(len(list_of_images))))
     thumbnail_width_height = collage_width_hight//cols_rows
@@ -21,6 +13,8 @@ def create_collage(listofimages):
     thumbnail_images = []
     for p in list_of_images:
         image = Image.open(p)
+        if image.size < (thumbnail_width_height, thumbnail_width_height):
+            image = image.resize((thumbnail_width_height, thumbnail_width_height))
         image.thumbnail((thumbnail_width_height, thumbnail_width_height))
         thumbnail_images.append(image)
     i = 0
@@ -29,7 +23,6 @@ def create_collage(listofimages):
     try:
         for col in range(cols_rows):
             for row in range(cols_rows):
-                print(i, x, y)
                 collage.paste(thumbnail_images[i], (x, y))
                 i += 1
                 x += thumbnail_width_height
@@ -37,7 +30,10 @@ def create_collage(listofimages):
             x = 0
     except IndexError:
         pass
-    collage.save("repos/Collage.jpg")
+    collage.save(f"{repo}/Collage.jpg")
 
 
-create_collage(list_of_images)
+list_of_repos = [f'repos/{i}' for i in os.listdir(path="repos")]
+for repo in list_of_repos:
+    list_of_images = [f'{repo}/{i}' for i in os.listdir(path=repo)]
+    create_collage(list_of_images, repo)
