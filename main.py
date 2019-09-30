@@ -1,7 +1,7 @@
 import requests
 import os
 import config
-import collage_oop as col
+import collage as col
 
 
 class AvatarsDownloader:
