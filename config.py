@@ -17,7 +17,7 @@ password = my_pass.password
 auth = (login, password)
 
 # number of Threads to download avatars
-ava_threads = 3
+ava_threads = 5
 
 # number of Threads to compose collage
-collage_threads = 3
+collage_threads = 5

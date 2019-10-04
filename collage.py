@@ -20,7 +20,6 @@ class Collage:
         self.run()
 
     def make_thumbnails(self, images, repo):
-        print("make thumbnails")
         for p in self.list_of_images:
             image = Image.open(p)
             if image.size < (self.thumbnail_width_height,
@@ -33,7 +32,6 @@ class Collage:
         return self.thumbnail_images
 
     def make_collage(self, thumbnails):
-        print('make collage')
         try:
             for col in range(self.cols_rows):
                 for row in range(self.cols_rows):
@@ -48,8 +46,8 @@ class Collage:
         self.collage.save(f"{self.repo}/Collage.jpg")
 
     def run(self):
-        print('Run collage')
         self.make_collage(self.make_thumbnails(self.list_of_images, self.repo))
+        print(f'Done collage {self.repo}')
 
 
 if __name__ == '__main__':
