@@ -1,7 +1,8 @@
 import requests
 import os
 import config
-import collage as col
+from collage import Collage
+import time
 
 
 class AvatarsDownloader:
@@ -22,7 +23,7 @@ class AvatarsDownloader:
                                              i['contributors_url']})
             return len(items)
 
-        for e, i in enumerate(items[:10]):
+        for e, i in enumerate(items[:30]):
             self.repos_names.append({f"{e+1}_{i['name']}":
                                              i['contributors_url']})
         return len(items)
@@ -35,7 +36,7 @@ class AvatarsDownloader:
             # collects avatar urls from repo contributors
             avatar_links = [i['avatar_url'] for i in contributors.json()]
 
-            self.avatar_downloader(avatar_links, repo_name)
+            # self.avatar_downloader(avatar_links, repo_name)
 
     def avatar_downloader(self, avatar_links, repo_name):
         for num, link in enumerate(avatar_links):
@@ -56,8 +57,10 @@ class AvatarsDownloader:
 
 
 if __name__ == '__main__':
+    t = time.time()
     AvatarsDownloader(config.search).run()
-    list_of_repos = [f'repos/{i}' for i in os.listdir(path="repos")]
-    for repo in list_of_repos:
-        list_of_images = [f'{repo}/{i}' for i in os.listdir(path=repo)]
-        col.Collage(list_of_images, repo).run()
+    print(time.time() - t)
+    # list_of_repos = [f'repos/{i}' for i in os.listdir(path="repos")]
+    # for repo in list_of_repos:
+    #     list_of_images = [f'{repo}/{i}' for i in os.listdir(path=repo)]
+    #     Collage(list_of_images)
