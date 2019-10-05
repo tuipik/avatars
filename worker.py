@@ -42,10 +42,13 @@ def set_callback(chanel_name):
         pika.ConnectionParameters(host='localhost'))
     channel = connection.channel()
 
-    channel.queue_declare(queue=arg)
+    channel.queue_declare(queue=arg, auto_delete=False)
 
 
     def callback_contributors(ch, method, properties, body):
+        if body == b'done':
+            print(body)
+            connection.close()
         repositories = json.loads(body)
         print('{}'.format(threading.current_thread().name))
 
@@ -54,6 +57,10 @@ def set_callback(chanel_name):
 
 
     def callback_download(ch, method, properties, body):
+        if body == b'done':
+            print(body)
+            connection.close()
+            exit(0)
         b = json.loads(body)
         repo = [i for i in b[0]][0]
         with concurrent.futures.ThreadPoolExecutor(max_workers=config.ava_threads) as executor:
@@ -62,6 +69,9 @@ def set_callback(chanel_name):
 
 
     def callback_collage(ch, method, properties, body):
+        if body == b'done':
+            print(body)
+            connection.close()
         print('{}'.format(threading.current_thread().name))
         repo = f'repos/{body.decode("utf-8")}'
         list_of_images = [f'{repo}/{i}' for i in os.listdir(path=repo)]
@@ -81,6 +91,7 @@ def set_callback(chanel_name):
     print(' [*] Waiting for messages. To exit press CTRL+C')
 
     channel.start_consuming()
+
 
 
 with concurrent.futures.ThreadPoolExecutor(max_workers=config.collage_threads) as executor:

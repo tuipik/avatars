@@ -27,16 +27,25 @@ repos = json.dumps(collect_repo_dirs(config.search))
 
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 channel = connection.channel()
-channel.queue_declare(queue='contributors')
+channel.queue_declare(queue='contributors', auto_delete=False)
 
 channel.basic_publish(exchange='', routing_key='contributors', body=repos)
 
 channel = connection.channel()
-channel.queue_declare(queue='done')
+channel.queue_declare(queue='done', auto_delete=False)
 
+counter = 0
 
 def callback(ch, method, properties, body):
+    global counter
     print("[x] Collage ready for repo: %r" % (body,))
+    counter += 1
+    if counter == 10:
+        channel.basic_publish(exchange='', routing_key='contributors', body='done')
+        channel.basic_publish(exchange='', routing_key='download', body='done')
+        channel.basic_publish(exchange='', routing_key='collage', body='done')
+        connection.close()
+
 
 
 channel.basic_consume('done', callback, auto_ack=True)
